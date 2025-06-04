@@ -3,17 +3,17 @@ Project Plan for Don't Wreck My House
 Daily Tasks:
 
 Day 1 (1-1.5 hours):
-- Create project plan
-- Brainstorm and list steps 
-- Set up packages
-- pom.xml configuration
+- Create project plan ✅
+- Brainstorm and list steps ✅
+- Set up packages ✅
+- pom.xml configuration ✅
 
 Day 2 (1.5-2 hours):
-- Begin working on model layer
-- Design Guest, Host, Reservation classes
-- Model all necessary fields
-- Getters/Setters, Constructors, etc.
-- Test model validation
+- Begin working on model layer ✅
+- Design Guest, Host, Reservation classes ✅
+- Model all necessary fields ✅
+- Getters/Setters, Constructors, etc. ✅
+- Test model validation ✅
 
 Day 3 (3-4 hours):
 - Implement FileRepository classes (Guest, Host, Reservation)
