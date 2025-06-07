@@ -16,10 +16,10 @@ Day 2 (1.5-2 hours):
 - Test model validation ✅
 
 Day 3 (3-4 hours):
-- Implement FileRepository classes (Guest, Host, Reservation)
-- Implement DataException
-- Handle reading/writing .csv files
-- Unit tests for each file repository 
+- Implement FileRepository classes (Guest, Host, Reservation) ✅
+- Implement DataException ✅
+- Handle reading/writing .csv files ✅
+- Unit tests for each file repository ✅
 
 Day 4 (3-4 hours):
 - Apply business logic and validation for ReservationService
