@@ -2,11 +2,13 @@ package learn.mastery.domain;
 
 import learn.mastery.data.DataException;
 import learn.mastery.data.ReservationRepository;
+import learn.mastery.models.Host;
 import learn.mastery.models.Reservation;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationService {
@@ -115,6 +117,14 @@ public class ReservationService {
         }
 
         return result;
+    }
+
+    public List<Reservation> findByHost(Host host) {
+        try {
+            return reservationRepository.findByHost(host);
+        } catch (DataException ex) {
+            return new ArrayList<>();
+        }
     }
 
 
