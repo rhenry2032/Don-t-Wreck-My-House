@@ -22,9 +22,9 @@ Day 3 (3-4 hours):
 - Unit tests for each file repository ✅
 
 Day 4 (3-4 hours):
-- Apply business logic and validation for ReservationService
-- Inject repositories as dependencies
-- Test for overlap logic, correct pricing (weekday/weekend), validation
+- Apply business logic and validation for ReservationService ✅
+- Inject repositories as dependencies ✅
+- Test for overlap logic, correct pricing (weekday/weekend), validation ✅
 
 Day 5 (3-4 hours):
 - Implement ConsoleIO, View, Controller
