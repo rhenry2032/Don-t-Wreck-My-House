@@ -160,7 +160,7 @@ public class ReservationService {
         return result;
     }
 
-    private BigDecimal calculateTotal(Reservation r) {
+    public BigDecimal calculateTotal(Reservation r) {
         BigDecimal total = BigDecimal.ZERO;
         LocalDate date = r.getStartDate();
 

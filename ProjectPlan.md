@@ -27,9 +27,9 @@ Day 4 (3-4 hours):
 - Test for overlap logic, correct pricing (weekday/weekend), validation ✅
 
 Day 5 (3-4 hours):
-- Implement ConsoleIO, View, Controller
-- Create Main Menu and any sub-menus
-- Test proper functionality and design
+- Implement ConsoleIO, View, Controller ✅
+- Create Main Menu and any sub-menus ✅
+- Test proper functionality and design ✅
 
 Day 6 and 7 (4-8 hours):
 - Continue testing to ensure full functionality

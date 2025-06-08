@@ -3,7 +3,7 @@ package learn.mastery.ui;
 public enum MainMenuOption {
     EXIT(0, "Exit"),
     VIEW_RESERVATIONS(1, "View Reservations for Host"),
-    MAKE_RESERVATION(2, "Make a Reservation"),
+    ADD_RESERVATION(2, "Add a Reservation"),
     EDIT_RESERVATION(3, "Edit a Reservation"),
     CANCEL_RESERVATION(4, "Cancel a Reservation");
 

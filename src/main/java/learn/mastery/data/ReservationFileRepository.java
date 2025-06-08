@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ReservationFileRepository implements ReservationRepository{
@@ -53,6 +54,7 @@ public class ReservationFileRepository implements ReservationRepository{
         } catch (IOException ex) {
             throw new DataException("Could not read reservations file: " + filePath, ex);
         }
+        reservations.sort(Comparator.comparing(Reservation::getStartDate));     // sorts by date
         return reservations;
     }
 

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.text.NumberFormat;
 
 public class View {
 
@@ -26,6 +27,13 @@ public class View {
     public void displayHeader(String message) {
         io.println("");
         io.println("=".repeat(message.length()));
+        io.println(message);
+        io.println("=".repeat(message.length()));
+    }
+
+    // Print header for sub-menus
+    public void printHeader(String message) {
+        io.println("");
         io.println(message);
         io.println("=".repeat(message.length()));
     }
@@ -82,11 +90,11 @@ public class View {
         }
     }
 
-    public Reservation makeReservation(Guest guest, Host host, List<Reservation> existing) {
+    public Reservation makeReservation(Guest guest, Host host, List<Reservation> existing, ReservationService service) {
         displayReservations(host, existing);
 
         LocalDate start = io.readDate("Start (MM/dd/yyyy): ");
-        LocalDate end = io.readDate("End (MM/dd/yyyy: ");
+        LocalDate end = io.readDate("End (MM/dd/yyyy): ");
 
         Reservation reservation = new Reservation();
         reservation.setGuest(guest);
@@ -94,10 +102,17 @@ public class View {
         reservation.setStartDate(start);
         reservation.setEndDate(end);
 
+        BigDecimal total = service.calculateTotal(reservation);
+        reservation.setTotal(total);
+
+        // Format total to currency
+        NumberFormat currency = NumberFormat.getCurrencyInstance();
+
         io.println("\nSummary");
         io.println("=======");
         io.printf("Start: %s%n", start);
         io.printf("End: %s%n", end);
+        io.printf("Total: %s%n", currency.format(total));
 
         boolean confirm = io.readBoolean("Is that okay? [y/n]: ");
         return confirm ? reservation : null;
@@ -113,7 +128,7 @@ public class View {
             return null;
         }
 
-        displayReservations(host, reservations);
+        displayReservations(host, matches);
         int id = io.readInt("Reservation ID: ", 1, 100);        // 100 reservation max
 
         return matches.stream()
@@ -137,21 +152,48 @@ public class View {
         return reservation;
     }
 
-    public void displayResult(Result<?> result) {
+    public <T> void displayResult(Result<T> result, String action) {
         if (result.isSuccess()) {
+            io.println("");
             io.println("Success");
             io.println("=======");
+
+            T payload = result.getPayload();
+            if (payload instanceof Reservation) {
+                Reservation res = (Reservation) payload;
+                io.printf("Reservation %d %s.%n", res.getId(), action);
+            } else {
+                io.printf("Reservation successfully %s.%n", action);
+            }
         } else {
-            io.println("Error(s):");
             for (String message : result.getMessages()) {
-                io.println("- " + message);
+                displayMessage(message);
             }
         }
     }
 
+
     public boolean readConfirmCancel() {
         return io.readBoolean("Are you sure you want to cancel this reservation? [y/n]: ");
     }
+
+    public boolean readConfirm(String prompt) {
+        String input = io.readRequiredString(prompt);
+        return input.trim().equalsIgnoreCase("y");
+    }
+
+    public void displayReservationSummary(Reservation res) {
+        NumberFormat currency = NumberFormat.getCurrencyInstance();
+
+        io.println("");
+        io.println("Summary");
+        io.println("=======");
+        io.printf("Start: %s%n", res.getStartDate());
+        io.printf("End: %s%n", res.getEndDate());
+        io.printf("Total: %s%n", currency.format(res.getTotal()));
+    }
+
+
 
 
 

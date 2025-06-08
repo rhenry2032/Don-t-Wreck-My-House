@@ -9,6 +9,7 @@ import learn.mastery.models.Guest;
 import learn.mastery.models.Host;
 import learn.mastery.models.Reservation;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class Controller {
@@ -32,27 +33,30 @@ public class Controller {
             option = view.selectMainMenuOption();
             switch (option) {
                 case VIEW_RESERVATIONS:
+                    view.printHeader("View Reservations for Host");
                     viewReservations();
                     break;
-                case MAKE_RESERVATION:
+                case ADD_RESERVATION:
+                    view.printHeader("Add Reservation");
                     makeReservations();
                     break;
                 case EDIT_RESERVATION:
+                    view.printHeader("Edit Reservation");
                     editReservation();
                     break;
                 case CANCEL_RESERVATION:
+                    view.printHeader("Cancel Reservation");
                     cancelReservation();
                     break;
             }
         } while (option != MainMenuOption.EXIT);
-        view.displayMessage("Goodbye.");
+        view.displayMessage("\nThanks for not wrecking my house! Goodbye!");
     }
 
     private void viewReservations() throws DataException {
         Host host = view.selectHost(hostService);
 
         if (host == null) {
-            view.displayMessage("Host not found.");
             return;
         }
 
@@ -67,56 +71,93 @@ public class Controller {
 
     private void makeReservations() throws DataException {
         Guest guest = view.selectGuest(guestService);
-        Host host = view.selectHost(hostService);
+        if (guest == null){
+            return;
+        }
 
-        if (guest == null || host == null) {
-            view.displayMessage("Guest or Host not found.");
+        Host host = view.selectHost(hostService);
+        if (host == null) {
             return;
         }
 
         List<Reservation> existing = reservationService.findByHost(host);
-        Reservation reservation = view.makeReservation(guest, host, existing);
+        Reservation reservation = view.makeReservation(guest, host, existing, reservationService);
 
         if (reservation == null) {
             return;
         }
 
         Result<Reservation> result = reservationService.addReservation(reservation);
-        view.displayResult(result);
+        view.displayResult(result, "created");
     }
 
     private void editReservation() throws DataException {
         Guest guest = view.selectGuest(guestService);
+        if (guest == null){
+            return;
+        }
+
         Host host = view.selectHost(hostService);
-        if (guest == null || host == null) {
-            view.displayMessage("Guest or Host not found.");
+        if (host == null) {
             return;
         }
 
         List<Reservation> reservations = reservationService.findByHost(host);
         Reservation toEdit = view.chooseReservation(guest, host, reservations);
-        if (toEdit == null) return;
+        if (toEdit == null) {
+            return;
+        }
 
         Reservation updated = view.editReservation(toEdit);
-        Result<Reservation> result = reservationService.updateReservation(updated);
-        view.displayResult(result);
+        if (updated == null) {
+            return;
+        }
+
+        // Display reservation summary before update
+        view.displayReservationSummary(updated);
+
+        if (view.readConfirm("Is this okay? [y/n]: ")) {
+            Result<Reservation> result = reservationService.updateReservation(updated);
+            view.displayResult(result, "updated");
+        } else {
+            view.displayMessage("Reservation update canceled.");
+        }
     }
+
 
     private void cancelReservation() throws DataException {
         Guest guest = view.selectGuest(guestService);
+        if (guest == null) {
+            return;
+        }
+
         Host host = view.selectHost(hostService);
-        if (guest == null || host == null) {
-            view.displayMessage("Guest or Host not found.");
+        if (host == null) {
             return;
         }
 
         List<Reservation> reservations = reservationService.findByHost(host);
         Reservation toCancel = view.chooseReservation(guest, host, reservations);
-        if (toCancel == null) return;
+        if (toCancel == null) {
+            return;
+        }
+
+        if (toCancel.getStartDate().isBefore(LocalDate.now())) {
+            view.displayMessage("You cannot cancel a reservation that is in the past.");
+            return;
+        }
 
         if (view.readConfirmCancel()) {
             Result<Void> result = reservationService.cancelReservation(toCancel);
-            view.displayResult(result);
+            if (result.isSuccess()) {
+                // Create a result with the Reservation payload just for display
+                Result<Reservation> displayResult = new Result<>();
+                displayResult.setPayload(toCancel);
+                view.displayResult(displayResult, "cancelled");
+            } else {
+                view.displayResult(result, "cancelled");
+            }
         }
     }
+
 }
