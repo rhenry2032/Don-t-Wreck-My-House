@@ -80,7 +80,7 @@ public class View {
 
         for (Reservation r : reservations) {
             Guest g = r.getGuest();
-            io.printf("ID: %d%nDates: %s - %s%nGuest: %s, %s%nEmail: %s%n%n",
+            io.printf("ID: %d%nDates: %s - %s%nGuest: %s %s%nEmail: %s%n%n",
                     r.getId(),
                     r.getStartDate(),
                     r.getEndDate(),
@@ -131,14 +131,20 @@ public class View {
         displayReservations(host, matches);
         int id = io.readInt("Reservation ID: ", 1, 100);        // 100 reservation max
 
-        return matches.stream()
+        Reservation selected = matches.stream()
                 .filter(r -> r.getId() == id)
                 .findFirst()
                 .orElse(null);
 
+        if (selected == null){
+            displayMessage("Invalid reservation ID.");
+        }
+
+        return selected;
+
     }
 
-    public Reservation editReservation(Reservation reservation) {
+    public Reservation editReservation(Reservation reservation, ReservationService service) {
         LocalDate start = io.readDate(String.format("Start (%s): ", reservation.getStartDate()));
         LocalDate end = io.readDate(String.format("End (%s): ", reservation.getEndDate()));
 
@@ -149,7 +155,20 @@ public class View {
             reservation.setEndDate(end);
         }
 
-        return reservation;
+        // Prevent editing past reservations
+        if (reservation.getStartDate().isBefore(LocalDate.now())) {
+            io.println("You cannot edit a reservation to start before today's date.");
+            return null;
+        }
+
+        // Recalculate total for new dates
+        BigDecimal total = service.calculateTotal(reservation);
+        reservation.setTotal(total);
+
+        displayReservationSummary(reservation);
+
+        boolean confirm = io.readBoolean("Is this okay? [y/n]: ");
+        return confirm ? reservation : null;
     }
 
     public <T> void displayResult(Result<T> result, String action) {

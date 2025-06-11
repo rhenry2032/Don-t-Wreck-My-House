@@ -108,7 +108,7 @@ public class Controller {
             return;
         }
 
-        Reservation updated = view.editReservation(toEdit);
+        Reservation updated = view.editReservation(toEdit, reservationService);
         if (updated == null) {
             return;
         }
