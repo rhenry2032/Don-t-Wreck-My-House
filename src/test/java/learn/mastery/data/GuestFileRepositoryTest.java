@@ -1,6 +1,7 @@
 package learn.mastery.data;
 
 import learn.mastery.models.Guest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -12,6 +13,13 @@ class GuestFileRepositoryTest {
 
     static final String TEST_FILE_PATH = Path.of("src", "test", "resources",
             "data", "guests_test.csv").toString();
+
+    GuestFileRepository repo;
+
+    @BeforeEach
+    void setup() {
+        repo = new GuestFileRepository(TEST_FILE_PATH);
+    }
 
     // findAll tests
     @Test

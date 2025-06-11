@@ -1,6 +1,7 @@
 package learn.mastery.data;
 
 import learn.mastery.models.Host;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -14,6 +15,13 @@ class HostFileRepositoryTest {
     static final String TEST_FILE_PATH = Path.of("src", "test", "resources",
                                             "data", "hosts_test.csv").toString();
 
+    HostFileRepository repo;
+
+
+    @BeforeEach
+    void setup() {
+        repo = new HostFileRepository(TEST_FILE_PATH);
+    }
     // findAll tests
     @Test
     void shouldReadAllHosts() throws DataException {
