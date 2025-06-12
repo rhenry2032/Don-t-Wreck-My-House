@@ -4,27 +4,30 @@ import learn.mastery.models.Guest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GuestFileRepositoryTest {
 
-    static final String TEST_FILE_PATH = Path.of("src", "test", "resources",
-            "data", "guests_test.csv").toString();
+    static final Path SEED_PATH = Path.of("src", "test", "resources", "data", "guests-seed.csv");
+    static final Path TEST_PATH = Path.of("src", "test", "resources", "data", "guests_test.csv");
 
     GuestFileRepository repo;
 
     @BeforeEach
-    void setup() {
-        repo = new GuestFileRepository(TEST_FILE_PATH);
+    void setup() throws IOException {
+        Files.copy(SEED_PATH, TEST_PATH, StandardCopyOption.REPLACE_EXISTING);
+        repo = new GuestFileRepository(TEST_PATH.toString());
     }
 
     // findAll tests
     @Test
     void shouldReadAllGuests() throws DataException {
-        GuestFileRepository repo = new GuestFileRepository(TEST_FILE_PATH);
         List<Guest> guests = repo.findAll();
 
         assertNotNull(guests);
@@ -38,15 +41,13 @@ class GuestFileRepositoryTest {
 
     @Test
     void shouldThrowWhenFileDoesNotExist() {
-        GuestFileRepository repo = new GuestFileRepository("nonexistent.csv");
-
-        assertThrows(DataException.class, repo::findAll);
+        GuestFileRepository badRepo = new GuestFileRepository("nonexistent.csv");
+        assertThrows(DataException.class, badRepo::findAll);
     }
 
     // findById tests
     @Test
     void shouldFindGuestById() throws DataException {
-        GuestFileRepository repo = new GuestFileRepository(TEST_FILE_PATH);
         Guest guest = repo.findById(2);
 
         assertNotNull(guest);
@@ -55,16 +56,13 @@ class GuestFileRepositoryTest {
 
     @Test
     void shouldReturnNullWhenIdNotFound() throws DataException {
-        GuestFileRepository repo = new GuestFileRepository(TEST_FILE_PATH);
         Guest guest = repo.findById(999);
-
         assertNull(guest);
     }
 
     // findByEmail tests
     @Test
     void shouldFindGuestByEmail() throws DataException {
-        GuestFileRepository repo = new GuestFileRepository(TEST_FILE_PATH);
         Guest guest = repo.findByEmail("john.doe@example.com");
 
         assertNotNull(guest);
@@ -74,9 +72,7 @@ class GuestFileRepositoryTest {
 
     @Test
     void shouldReturnNullWhenEmailNotFound() throws DataException {
-        GuestFileRepository repo = new GuestFileRepository(TEST_FILE_PATH);
         Guest guest = repo.findByEmail("notfound@example.com");
-
         assertNull(guest);
     }
 

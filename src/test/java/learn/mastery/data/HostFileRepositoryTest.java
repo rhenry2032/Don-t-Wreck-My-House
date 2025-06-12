@@ -4,28 +4,31 @@ import learn.mastery.models.Host;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class HostFileRepositoryTest {
 
-    static final String TEST_FILE_PATH = Path.of("src", "test", "resources",
-                                            "data", "hosts_test.csv").toString();
+    static final Path SEED_PATH = Path.of("src", "test", "resources", "data", "hosts-seed.csv");
+    static final Path TEST_PATH = Path.of("src", "test", "resources", "data", "hosts_test.csv");
 
     HostFileRepository repo;
 
-
     @BeforeEach
-    void setup() {
-        repo = new HostFileRepository(TEST_FILE_PATH);
+    void setup() throws IOException {
+        Files.copy(SEED_PATH, TEST_PATH, StandardCopyOption.REPLACE_EXISTING);
+        repo = new HostFileRepository(TEST_PATH.toString());
     }
+
     // findAll tests
     @Test
     void shouldReadAllHosts() throws DataException {
-        HostFileRepository repo = new HostFileRepository(TEST_FILE_PATH);
         List<Host> hosts = repo.findAll();
 
         assertNotNull(hosts);
@@ -38,15 +41,13 @@ class HostFileRepositoryTest {
 
     @Test
     void shouldThrowWhenFileDoesNotExist() {
-        GuestFileRepository repo = new GuestFileRepository("nonexistent.csv");
-
-        assertThrows(DataException.class, repo::findAll);
+        HostFileRepository badRepo = new HostFileRepository("nonexistent.csv");
+        assertThrows(DataException.class, badRepo::findAll);
     }
 
     // findById tests
     @Test
     void shouldFindHostById() throws DataException {
-        HostFileRepository repo = new HostFileRepository(TEST_FILE_PATH);
         Host host = repo.findById("zyx-987");
 
         assertNotNull(host);
@@ -55,16 +56,13 @@ class HostFileRepositoryTest {
 
     @Test
     void shouldReturnNullWhenIdNotFound() throws DataException {
-        HostFileRepository repo = new HostFileRepository(TEST_FILE_PATH);
         Host host = repo.findById("xyz-999");
-
         assertNull(host);
     }
 
     // findByEmail tests
     @Test
     void shouldFindHostByEmail() throws DataException {
-        HostFileRepository repo = new HostFileRepository(TEST_FILE_PATH);
         Host host = repo.findByEmail("roger@example.com");
 
         assertNotNull(host);
@@ -74,9 +72,7 @@ class HostFileRepositoryTest {
 
     @Test
     void shouldReturnNullWhenEmailNotFound() throws DataException {
-        HostFileRepository repo = new HostFileRepository(TEST_FILE_PATH);
         Host host = repo.findByEmail("notfound@example.com");
-
         assertNull(host);
     }
 
