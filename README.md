@@ -26,6 +26,7 @@ This console application simulates an Airbnb-style booking system with file-base
 - Handled CSV file persistence for host, guest, and reservation records
 
 ## 📂 Project Structure
+<pre>
 src
 ├───main
 │   ├───java
@@ -77,6 +78,7 @@ src
         GuestServiceTest.java
         HostServiceTest.java
         ReservationServiceTest.java
+</pre>
 
 
 ## 🚀 Getting Started
