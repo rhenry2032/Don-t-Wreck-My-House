@@ -6,7 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="module05-mastery-project-dont-wreck-my-house-rhenry2032" />
+        <module name="mastery" />
       </profile>
     </annotationProcessing>
   </component>
